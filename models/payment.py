@@ -279,7 +279,7 @@ class TxMpesa(models.Model):
 
     def _mpesa_get_request_data(self, **options):
         self.ensure_one()
-        if options['pay']:
+        if options.get('pay', False):
             if self.mpesa_pos_tx:
                return {
                 "url": 'stk_push',
@@ -300,7 +300,7 @@ class TxMpesa(models.Model):
                 "TransactionDesc": self.reference
             }
         
-        elif options['stk_status']:
+        elif options.get('stk_status', False):
             return {
                 "url": 'stk_push_status',
                 "CheckoutRequestID": self.checkout_request_id
