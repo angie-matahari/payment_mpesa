@@ -306,7 +306,9 @@ class TxMpesa(models.Model):
         self.ensure_one()
         values = self._mpesa_get_request_data(stk_status=True)
         response = self.acquirer_id.mpesa_request(values)
+        _logger.info(response)
         self._mpesa_form_validate(response)
+        _logger.info(self.state)
         if self.state == 'done':
             return True
         return False
