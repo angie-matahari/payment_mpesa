@@ -70,13 +70,11 @@
           </t>
       </template>
 
-      <template id="mpesa_complete" name="mpesa_complete">
+      <template id="mpesa_complete">
         <t t-call="website.layout">
           <div id="wrap">
               <div class="container oe_website_sale">
-                <t t-call="website_sale.wizard_checkout">
-                  <t t-set="step" t-value="50" />
-                </t>
+                
                <div class="row">
                   <div class="col">
                     <h6 class="text-center">
