@@ -343,6 +343,6 @@ class TxMpesa(models.Model):
         result_code = data.get('ResultCode', None)
         if result_code == 0 or result_code == '0':
             self._set_transaction_done()
-        elif result_code == 1032 result_code == '1032':
+        elif result_code == 1032 or result_code == '1032':
             self._set_transaction_cancel()
        
