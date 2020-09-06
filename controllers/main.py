@@ -53,7 +53,7 @@ class MpesaController(http.Controller):
             except Exception as e:
                 _logger.exception(e)
 
-            return request.render("payment_mpesa.mpesa_complete", {'reference': reference})
+            return request.render("payment_mpesa.mpesa_complete", {'reference': reference,'tx': tx})
 
     @http.route(
         ['/payment/mpesa/complete'], type='http', auth='public', methods=['POST'], 
