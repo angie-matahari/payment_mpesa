@@ -145,7 +145,6 @@ class PaymentAcquirer(models.Model):
         passkey = self.mpesa_short_code + self.mpesa_pass_key + time_stamp
         password = str(base64.b64encode(passkey.encode('utf-8')), 'utf-8')
         if values['url'] == 'stk_push':
-            # TODO: Remove url from the values
             values.update({
                 "BusinessShortCode": self.mpesa_short_code,
                 "Password": password,
@@ -157,7 +156,6 @@ class PaymentAcquirer(models.Model):
             values.update({
                 "BusinessShortCode": self.mpesa_short_code,
                 "Password": password,
-                # FIXME: Is this the current time_stamp or that of tx 
                 "Timestamp": time_stamp,
             })
         return values
