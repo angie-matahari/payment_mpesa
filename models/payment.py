@@ -155,33 +155,6 @@ class PaymentAcquirer(models.Model):
                 "PartyB": self.mpesa_short_code,
                 "CallBackURL": 'https://demo13.kylix.online/payment/mpesa/callback/',
             })
-        elif values['url'] == 'register':
-            values.update({
-                "ShortCode": self.mpesa_short_code,
-                "ResponseType": "Confirmed",
-                "ConfirmationURL": urls.url_join(base_url, MpesaController._confirmation_url),
-                "ValidationURL": urls.url_join(base_url, MpesaController._validation_url)
-            })
-        elif values['url'] == 'simulate':
-            values.update({}
-                # TODO: Add values here
-            )
-        elif values['url'] == 'refund':
-            values.update({
-                "Initiator":" ",
-                "SecurityCredential":" ",
-                "CommandID":"TransactionReversal",
-                "ResultURL":"https://ip_address:port/result_url",
-                "QueueTimeOutURL":"https://ip_address:port/timeout_url",
-            })
-        elif values['url'] == 'status':
-            values.update({
-                "Initiator":" ",
-                "SecurityCredential":" ",
-                "CommandID":"TransactionStatusQuery",
-                "ResultURL":"https://ip_address:port/result_url",
-                "QueueTimeOutURL":"https://ip_address:port/timeout_url",
-            })
         elif values['url'] == 'stk_push_status':
             values.update({
                 "BusinessShortCode": self.mpesa_short_code,
