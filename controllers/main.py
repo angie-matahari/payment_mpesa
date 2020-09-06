@@ -42,7 +42,7 @@ class MpesaController(http.Controller):
 
     @http.route(
         ['/payment/mpesa/pay/'], type='http', auth='public', methods=['POST'], 
-        csrf=True)
+        csrf=True, website=True)
     def mpesa_pay(self, **post):
         reference = post['reference']
         if reference:
@@ -57,7 +57,7 @@ class MpesaController(http.Controller):
 
     @http.route(
         ['/payment/mpesa/complete'], type='http', auth='public', methods=['POST'], 
-        csrf=True)
+        csrf=True, website=True)
     def mpesa_complete(self, **post):
         reference = post['reference']
         if reference:
