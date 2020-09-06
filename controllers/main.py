@@ -48,11 +48,14 @@ class MpesaController(http.Controller):
         if reference:
             tx = request.env['payment.transaction'].sudo().search([('reference', '=', reference)], limit=1)
             tx.write({'mpesa_tx_phone': post['phone']}) 
+            tx_state = False
             try:
-                tx.s2s_do_transaction()
+                tx_state = tx.s2s_do_transaction()
             except Exception as e:
                 _logger.exception(e)
 
+            if not tx_state:
+                return werkzeug.utils.redirect('/payment/mpesa/confirm/')
             return request.render("payment_mpesa.mpesa_complete", {'reference': reference,'tx': tx})
 
     @http.route(

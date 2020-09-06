@@ -313,8 +313,6 @@ class TxMpesa(models.Model):
         # TODO: Change this validate to check for different things
         return self._mpesa_s2s_validate(response)
 
-   
-
     def _mpesa_s2s_validate(self, data):
         # TODO: set txns with already returned stuff from acquirer
         _logger.info(data)
@@ -330,8 +328,8 @@ class TxMpesa(models.Model):
                         'checkout_request_id': data.get('CheckoutRequestID'),
                         'merchant_request_id': data.get('MerchantRequestID'),
             })
-            self._set_transaction_pending()
             return True
+        return False
 
     def _mpesa_s2s_get_tx_status(self):
         self.ensure_one()
@@ -341,8 +339,6 @@ class TxMpesa(models.Model):
         if self.state == 'done':
             return True
         return False
-
-
 
     @api.model
     def _mpesa_form_get_tx_from_data(self, data):
