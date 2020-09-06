@@ -65,4 +65,4 @@ class MpesaController(http.Controller):
            status = tx._mpesa_s2s_get_tx_status()
            if status:
                return werkzeug.utils.redirect('/payment/process')
-        return request.render("payment_mpesa.mpesa_complete", {'reference': reference})
+        return request.render("payment_mpesa.mpesa_complete", {'reference': reference, 'tx': tx})

@@ -92,7 +92,7 @@
                     <form action="/payment/mpesa/complete" method="post">
                       <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
                       <input type="hidden" name='reference' t-att-value='reference'/>
-                      
+                      <input type="hidden" name='tx' t-att-value='tx'/>
                       <button type="submit" class="btn btn-primary btn-block">
                         Confirm
                       </button>
