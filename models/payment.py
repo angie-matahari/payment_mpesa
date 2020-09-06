@@ -323,33 +323,15 @@ class TxMpesa(models.Model):
         # TODO: Get errorCode and errorMessage from response
         # error = data.get('errorCode')
         _logger.info(status)
-        error_message = data.get('errorMessage')
         if status == '0':
             _logger.info('status 0')
-            if data.get('MpesaReceiptNumber'):
-                _logger.info('done ' + data.get('MpesaReceiptNumber'))
-                self.write({'acquirer_reference': data.get('MpesaReceiptNumber')})
-                self._set_transaction_done()
-                return True
-            else:
-                _logger.info('pending')
-                self.write({'state_message': data.get('ResponseDescription'),
-                            'checkout_request_id': data.get('CheckoutRequestID'),
-                            'merchant_request_id': data.get('MerchantRequestID'),
-                })
-                self._set_transaction_pending()
-                return True
-        # TODO: Look at all the ResultCodes for status pending possibilities
-        else:
-            if status == 1032: # <str> or <int>
-                errorMessage = _('M-Pesa: The customer rejected the transaction')
-            else:
-                errorMessage = _(error_message)
-            _logger.info(errorMessage)
-            _logger.info('cancel')
-            self.write({'state_message': errorMessage})
-            self._set_transaction_cancel()
-            return False
+            _logger.info('pending')
+            self.write({'state_message': data.get('ResponseDescription'),
+                        'checkout_request_id': data.get('CheckoutRequestID'),
+                        'merchant_request_id': data.get('MerchantRequestID'),
+            })
+            self._set_transaction_pending()
+            return True
 
     def _mpesa_s2s_get_tx_status(self):
         self.ensure_one()
