@@ -118,14 +118,16 @@ class PaymentAcquirer(models.Model):
         _logger.info(data)
         data.pop('url')
         resp = requests.post(url, json=data, headers=headers)
-        # TODO: Happy path first
-        # FIXME: Check that this works 
-        if not resp.ok and not (400 <= resp.status_code < 500 and resp.json().get('error', {}).get('code', '')):
+
+        # Some useful data my be in a 500 response 
+        if resp.status_code == 500 :
+            return resp.json()
+        elif not resp.ok: 
             try:
                 resp.raise_for_status()
             except HTTPError:
                 _logger.error(resp.text)
-                mpesa_error = resp.json().get('error', {}).get('message', '')
+                mpesa_error = resp.json().get('errorMessage', {})
                 error_msg = " " + (_("MPesa gave us the following info about the problem: '%s'") % mpesa_error)
                 raise ValidationError(error_msg)
         return resp.json()
@@ -304,7 +306,7 @@ class TxMpesa(models.Model):
         self.ensure_one()
         values = self._mpesa_get_request_data(stk_status=True)
         response = self.acquirer_id.mpesa_request(values)
-        self.form_feedback(response, 'mpesa')
+        self._mpesa_form_validate(response)
         if self.state == 'done':
             return True
         return False
@@ -336,7 +338,7 @@ class TxMpesa(models.Model):
         return invalid_parameters
 
     def _mpesa_form_validate(self, data):
-        result_code = data.get('ResultCode')
+        result_code = data.get('ResultCode', None)
         if result_code == 0:
             self._set_transaction_done()
         elif result_code == 1032:
