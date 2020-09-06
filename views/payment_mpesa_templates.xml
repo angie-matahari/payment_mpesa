@@ -1,0 +1,92 @@
+<odoo>
+    <data>
+      <template id="mpesa_form">
+          <t t-call="website.layout">
+            <!-- <t t-set="additional_title">
+              Shop - Confirmed
+            </t> -->
+            <div id="wrap">
+              <div class="container oe_website_sale">
+                <t t-call="website_sale.wizard_checkout">
+                  <t t-set="step" t-value="50" />
+                </t>
+                <!-- <div class="row">
+                  <div class="col">
+                  </div>
+                  <div class="col">
+                    <div class="thanks_msg">
+                      <h5 class="text-center">
+                        Thank you for your order.
+                        <em t-field="order.name" />
+                      </h5>
+                    </div>
+                  </div>
+                  <div class="col">
+                  </div>
+                </div> -->
+                <div class="row">
+                  <div class="col">
+                  </div>
+                  <div class="col">
+                    <h6 class="text-center">
+                      <strong>
+                        Payment information:
+                      </strong>
+                    </h6>
+                  </div>
+                  <div class="col">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                  </div>
+                  <div class="col">
+                    <h6 class="text-center">
+                      <strong>
+                        STK-PUSH
+                      </strong>
+                    </h6>
+                    <ol>
+                      <li>
+                        Enter Phone Number Below
+                      </li>
+                    </ol>
+                  </div>
+                  <div class="col">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                  </div>
+                  <div class="col">
+                    <form action="/payment/mpesa/pay" method="post">
+                      <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                      <input type="hidden" name='reference' t-att-value='reference'/>
+                      <input type="hidden" name='tx' t-att-value='tx'/>
+                      <!-- <input type="hidden" name='acquirer' t-att-value='acquirer'/> -->
+                      <!-- <input type="hidden" name='amount' t-att-value='amount'/> -->
+                      <input type="hidden" name='currency' t-att-value='currency'/>
+                      <div class="form-group field-password">
+                        <label for="password">
+                          Phone Number
+                        </label>
+                        <input type="tel" placeholder="254xxxxx" name="phone" id="phone" t-attf-class="form-control #{'form-control-sm' if form_small else ''}" required="required" maxlength="12" />
+                      </div>
+                      <button type="submit" class="btn btn-primary btn-block">
+                        Pay
+                      </button>
+                    </form>
+                  </div>
+                  <div class="col">
+                  </div>
+                </div>
+                <div class="row">
+                  <p>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </t>
+      </template>
+    </data>
+</odoo>
