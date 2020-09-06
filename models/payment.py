@@ -114,7 +114,7 @@ class PaymentAcquirer(models.Model):
         headers = {
             'Authorization': 'Bearer %s' % self._mpesa_get_access_token()
             }
-        data = self._mpesa_get_request_data(values)
+        data = self._mpesa_get_stk_request_data(values)
         _logger.info(data)
         data.pop('url')
         resp = requests.post(url, json=data, headers=headers)
@@ -137,15 +137,13 @@ class PaymentAcquirer(models.Model):
 
     # TODO: Move this to tx, easier to call crap
     # TODO: Add value options based on command_id or something
-    def _mpesa_get_request_data(self, values):
+    def _mpesa_get_stk_request_data(self, values):
         self.ensure_one()
         base_url = self.get_base_url()
 
         time_stamp = str(time.strftime('%Y%m%d%H%M%S'))
         passkey = self.mpesa_short_code + self.mpesa_pass_key + time_stamp
         password = str(base64.b64encode(passkey.encode('utf-8')), 'utf-8')
-        phone = self._mpesa_format_phone_number(values['PartyA'])
-
         if values['url'] == 'stk_push':
             # TODO: Remove url from the values
             values.update({
