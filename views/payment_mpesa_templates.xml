@@ -2,28 +2,11 @@
     <data>
       <template id="mpesa_form">
           <t t-call="website.layout">
-            <!-- <t t-set="additional_title">
-              Shop - Confirmed
-            </t> -->
             <div id="wrap">
               <div class="container oe_website_sale">
                 <t t-call="website_sale.wizard_checkout">
                   <t t-set="step" t-value="50" />
                 </t>
-                <!-- <div class="row">
-                  <div class="col">
-                  </div>
-                  <div class="col">
-                    <div class="thanks_msg">
-                      <h5 class="text-center">
-                        Thank you for your order.
-                        <em t-field="order.name" />
-                      </h5>
-                    </div>
-                  </div>
-                  <div class="col">
-                  </div>
-                </div> -->
                 <div class="row">
                   <div class="col">
                   </div>
@@ -63,8 +46,6 @@
                       <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
                       <input type="hidden" name='reference' t-att-value='reference'/>
                       <input type="hidden" name='tx' t-att-value='tx'/>
-                      <!-- <input type="hidden" name='acquirer' t-att-value='acquirer'/> -->
-                      <!-- <input type="hidden" name='amount' t-att-value='amount'/> -->
                       <input type="hidden" name='currency' t-att-value='currency'/>
                       <div class="form-group field-password">
                         <label for="password">
@@ -88,5 +69,38 @@
             </div>
           </t>
       </template>
+
+      <template id="mpesa_complete" name="mpesa_complete">
+        <t t-call="website.layout">
+          <div id="wrap">
+              <div class="container oe_website_sale">
+               <div class="row">
+                  <div class="col">
+                    <h6 class="text-center">
+                      <strong>
+                        Confirm MPesa Transaction
+                      </strong>
+                    </h6>
+                  </div>
+                </div> 
+
+                <div class="row">
+                  <div class="col">
+                    <form action="/payment/mpesa/complete" method="post">
+                      <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                      <input type="hidden" name='reference' t-att-value='reference'/>
+                      
+                      <button type="submit" class="btn btn-primary btn-block">
+                        Confirm
+                      </button>
+                    </form>
+                  </div>
+                </div> 
+
+              </div>
+          </div>
+        </t>
+      </template>
+
     </data>
 </odoo>

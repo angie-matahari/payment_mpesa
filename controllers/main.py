@@ -18,15 +18,6 @@ _logger = logging.getLogger(__name__)
 
 
 class MpesaController(http.Controller):
-    # FIXME: Sort this out please
-    # _access_return_url = '/payment/mpesa/access/'
-    _callback_url = '/payment/mpesa/callback/'
-    _pay_url = '/payment/mpesa/pay/'
-    # _confirm_url = '/payment/mpesa/confirm/'
-    _feedback_url = '/payment/mpesa/pay/'
-    _return_url = '/payment/mpesa/confirm/'
-    _cancel_url = '/payment/mpesa/cancel/'
-    _error_url = '/payment/mpesa/error'
 
     @http.route(
         ['/payment/mpesa/callback/'], type='json', auth='public', methods=['POST'], 
@@ -40,41 +31,38 @@ class MpesaController(http.Controller):
             request.env['payment.transaction'].sudo().form_feedback(post, 'mpesa')
         return "Success"
 
-    @http.route('/payment/mpesa/confirm/', type='http', website=True)
+    @http.route('/payment/mpesa/confirm/', type='http', website=True, auth='public')
     def payment_confirmation(self, **post):
         _logger.info(post)
         print(post)
         reference = post['reference']
         if reference:
             tx = request.env['payment.transaction'].sudo().browse(reference)
-            # providers = request.env['payment.acquirer'].sudo().search([])
             return request.render("payment_mpesa.mpesa_form", {'reference': reference, 'tx': tx, 'currency': post['currency']})
 
     @http.route(
         ['/payment/mpesa/pay/'], type='http', auth='public', methods=['POST'], 
-        csrf=False)
+        csrf=True)
     def mpesa_pay(self, **post):
-        # TODO: Add way to get tx object
-        # TODO: Investigate this return_url thing
-        # TODO: Add phone capture details
-        tx = request.env['payment.transaction'].sudo().search([('reference', '=', post['reference'])], limit=1)
-        print(tx.id)
-        print(post['reference'])
-        # return_url = post['return_url'] or tx.return_url
-        print(post['phone'])
-        tx.write({'mpesa_tx_phone': post['phone']}) 
-        try:
-            tx.s2s_do_transaction()
-            # secret = request.env['ir.config_parameter'].sudo().get_param('database.secret')
-            # token_str = '%s%s%s' % (tx.id, tx.reference, tx.amount)
-            # token = hmac.new(secret.encode('utf-8'), token_str.encode('utf-8'), hashlib.sha256).hexdigest()
-            # tx.return_url = return_url or '/website_payment/confirm?tx_id=%d&access_token=%s' % (tx.id, token)
-        except Exception as e:
-            _logger.exception(e)
-        # TODO: REDIRECT?
-        return werkzeug.utils.redirect('/payment/process')
+        reference = post['reference']
+        if reference:
+            tx = request.env['payment.transaction'].sudo().search([('reference', '=', reference)], limit=1)
+            tx.write({'mpesa_tx_phone': post['phone']}) 
+            try:
+                tx.s2s_do_transaction()
+            except Exception as e:
+                _logger.exception(e)
 
+            return request.render("payment_mpesa.mpesa_complete", {'reference': reference})
 
-# TODO: Timeout url
-# TODO: ConfirmationURL
-# TODO: ValidationURL
+    @http.route(
+        ['/payment/mpesa/complete'], type='http', auth='public', methods=['POST'], 
+        csrf=True)
+    def mpesa_complete(self, **post):
+        reference = post['reference']
+        if reference:
+           tx = request.env['payment.transaction'].sudo().search([('reference', '=', reference)], limit=1) 
+           status = tx._mpesa_s2s_get_tx_status()
+           if status:
+               return werkzeug.utils.redirect('/payment/process')
+        return request.render("payment_mpesa.mpesa_complete", {'reference': reference})
