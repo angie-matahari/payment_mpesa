@@ -152,7 +152,7 @@ class PaymentAcquirer(models.Model):
                 "Password": password,
                 "Timestamp": time_stamp,
                 "PartyB": self.mpesa_short_code,
-                "CallBackURL": 'https://demo13.kylix.online/payment/mpesa/callback/',
+                "CallBackURL": urls.url_join(base_url, MpesaController._callback_url),
             })
         elif values['url'] == 'stk_push_status':
             values.update({
@@ -264,13 +264,12 @@ class TxMpesa(models.Model):
             return {
                 "url": 'stk_push',
                 "TransactionType": self.mpesa_command_id,
-                "Amount": 10,
+                "Amount": self.mpesa_amount,
                 "PartyA": self.mpesa_tx_phone,
                 "PhoneNumber": self.mpesa_tx_phone,
                 "AccountReference": self.partner_name,
                 "TransactionDesc": self.reference
             }
-        
         elif options.get('stk_status', False):
             return {
                 "url": 'stk_push_status',
